@@ -39,22 +39,28 @@
 /**
  * Add category's description at the top page
  *
- * @param string $content
+ * @param string $title
  * @return string
  *
  * @uses is_category()
  * @uses category_description()
  * @link http://codex.wordpress.org/Function_Reference
  */
-function add_category_description_filter($content)
+function add_category_description_filter($title)
 {
     if (is_category() AND
         strlen(category_description()) > 0) {
-        $content = '<div>' . category_description() . '</div>' . $content;
+
+        //Remove the first and last <p> tags
+        $categoryDescription = preg_replace('/<p[^>]*>(.*)<\/p[^>]*>/i', '$1', category_description());
+        $title               = $title .
+                               "<br/> Description: <p style='font-weight: normal;text-transform: none !important';>" .
+                               $categoryDescription .
+                               '</p>' ;
     }
 
-    return $content;
+    return $title;
 }
 
 //Filter category page and add category's description at the top
-add_filter( 'the_content', 'add_category_description_filter' );
+add_filter( 'single_cat_title', 'add_category_description_filter' );
